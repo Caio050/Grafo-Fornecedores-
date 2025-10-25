@@ -1,47 +1,158 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.text.Normalizer;
 
 public class Grafo {
-    private List<Vertice> vertices; // lista de vértices do grafo
-    private List<Aresta> arestas; // lista de arestas do grafo
+    private List<Vertice> vertices;
+    private List<Aresta> arestas;
 
-    public Grafo() { // construtor do grafo
-        vertices = new ArrayList<>(); // inicializa a lista de vértices
-        arestas = new ArrayList<>(); // inicializa a lista de arestas
+    public Grafo() {
+        vertices = new ArrayList<>();
+        arestas = new ArrayList<>();
     }
 
-    public void adicionarVertice(Vertice vertice) { // adiciona um vértice ao grafo
+    public void adicionarVertice(Vertice vertice) {
         vertices.add(vertice);
     }
 
-    public void adicionarAresta(Aresta aresta) { // adiciona uma aresta ao grafo
+    public void adicionarAresta(Aresta aresta) {
         arestas.add(aresta);
-        aresta.getOrigem().adicionarAresta(aresta); // associa a aresta ao vértice de origem
     }
 
-    public List<Vertice> getVertices() { // retorna a lista de vértices
+    public List<Vertice> getVertices() {
         return vertices;
     }
 
-    public List<Aresta> getArestas() { // retorna a lista de arestas
+    public List<Aresta> getArestas() {
         return arestas;
     }
 
-    public Vertice buscarVertice(String nome) { // procura um vértice pelo nome
-        for (Vertice v : vertices) { // percorre todos os vértices
-            if (v.getNome().equalsIgnoreCase(nome)) { // compara os nomes
-                return v; // retorna se encontrar
+    // Função para remover acentos e padronizar string
+    private String normalizar(String str) {
+        str = Normalizer.normalize(str, Normalizer.Form.NFD);
+        str = str.replaceAll("\\p{M}", "");
+        return str.toLowerCase().trim();
+    }
+
+    public Vertice getVerticePorNome(String nome) {
+        String nomeNormalizado = normalizar(nome);
+        for (Vertice v : vertices) {
+            if (normalizar(v.getNome()).equals(nomeNormalizado)) {
+                return v;
             }
         }
-        return null; // retorna nulo se não achar
+        return null;
+    }
+
+    // -----------------------
+    // ALGORITMO DE DIJKSTRA
+    // -----------------------
+    public void menorCaminhoDijkstra(String nomeOrigem, String nomeDestino) {
+        Vertice origem = getVerticePorNome(nomeOrigem);
+        Vertice destino = getVerticePorNome(nomeDestino);
+
+        if (origem == null || destino == null) {
+            System.out.println("❌ Origem ou destino inválido!");
+            return;
+        }
+
+        Map<Vertice, Double> distancias = new HashMap<>();
+        Map<Vertice, Vertice> anteriores = new HashMap<>();
+        Set<Vertice> visitados = new HashSet<>();
+
+        for (Vertice v : vertices) {
+            distancias.put(v, Double.POSITIVE_INFINITY);
+        }
+        distancias.put(origem, 0.0);
+
+        PriorityQueue<Vertice> fila = new PriorityQueue<>(Comparator.comparingDouble(distancias::get));
+        fila.add(origem);
+
+        while (!fila.isEmpty()) {
+            Vertice atual = fila.poll();
+            if (!visitados.add(atual)) continue;
+
+            for (Aresta a : arestas) {
+                if (a.getOrigem().equals(atual)) {
+                    Vertice vizinho = a.getDestino();
+                    double novaDist = distancias.get(atual) + a.getHoras();
+                    if (novaDist < distancias.get(vizinho)) {
+                        distancias.put(vizinho, novaDist);
+                        anteriores.put(vizinho, atual);
+                        fila.add(vizinho);
+                    }
+                }
+            }
+        }
+
+        if (distancias.get(destino) == Double.POSITIVE_INFINITY) {
+            System.out.println("❌ Não há caminho entre " + nomeOrigem + " e " + nomeDestino);
+            return;
+        }
+
+        // Reconstruir o caminho
+        List<Vertice> caminho = new ArrayList<>();
+        for (Vertice v = destino; v != null; v = anteriores.get(v)) {
+            caminho.add(v);
+        }
+        Collections.reverse(caminho);
+
+        System.out.println("\nMelhor rota de " + nomeOrigem + " até " + nomeDestino + ":");
+        for (int i = 0; i < caminho.size(); i++) {
+            System.out.print(caminho.get(i).getNome());
+            if (i < caminho.size() - 1) System.out.print(" -> ");
+        }
+
+        System.out.println("\nTempo total: " + distancias.get(destino) + " horas\n");
+    }
+}
+
+// Classe Vertice
+class Vertice {
+    private String nome;
+
+    public Vertice(String nome) {
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
     }
 
     @Override
-    public String toString() { // retorna o grafo como texto
-        StringBuilder sb = new StringBuilder();
-        for (Aresta a : arestas) { // percorre todas as arestas
-            sb.append(a.toString()).append("\n"); // adiciona cada aresta no texto
-        }
-        return sb.toString();
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Vertice)) return false;
+        Vertice outro = (Vertice) obj;
+        return nome.equals(outro.nome);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nome);
+    }
+}
+
+// Classe Aresta
+class Aresta {
+    private Vertice origem;
+    private Vertice destino;
+    private double horas;
+
+    public Aresta(Vertice origem, Vertice destino, double horas) {
+        this.origem = origem;
+        this.destino = destino;
+        this.horas = horas;
+    }
+
+    public Vertice getOrigem() {
+        return origem;
+    }
+
+    public Vertice getDestino() {
+        return destino;
+    }
+
+    public double getHoras() {
+        return horas;
     }
 }
