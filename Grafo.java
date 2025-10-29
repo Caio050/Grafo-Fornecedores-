@@ -106,53 +106,8 @@ public class Grafo {
     }
 }
 
-// Classe Vertice
-class Vertice {
-    private String nome;
 
-    public Vertice(String nome) {
-        this.nome = nome;
-    }
 
-    public String getNome() {
-        return nome;
-    }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Vertice)) return false;
-        Vertice outro = (Vertice) obj;
-        return nome.equals(outro.nome);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(nome);
-    }
-}
 
-// Classe Aresta
-class Aresta {
-    private Vertice origem;
-    private Vertice destino;
-    private double horas;
-
-    public Aresta(Vertice origem, Vertice destino, double horas) {
-        this.origem = origem;
-        this.destino = destino;
-        this.horas = horas;
-    }
-
-    public Vertice getOrigem() {
-        return origem;
-    }
-
-    public Vertice getDestino() {
-        return destino;
-    }
-
-    public double getHoras() {
-        return horas;
-    }
-}

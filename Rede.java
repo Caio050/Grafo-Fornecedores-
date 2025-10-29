@@ -54,7 +54,7 @@ public class Rede {
             System.out.println("- " + v.getNome());
         }
 
-        System.out.print("\nDigite a fábrica de origem: ");
+        System.out.print("\n Digite a fábrica de origem: ");
         String origem = sc.nextLine().trim();
 
         System.out.print("Digite a fábrica de destino: ");
@@ -62,6 +62,5 @@ public class Rede {
 
         grafo.menorCaminhoDijkstra(origem, destino);
 
-        sc.close();
     }
 }

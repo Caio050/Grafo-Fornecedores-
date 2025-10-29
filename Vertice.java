@@ -1,29 +1,26 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
-public class Vertice {
-    private String nome; // nome do vértice (identificador)
-    private List<Aresta> arestas; // lista de arestas ligadas a este vértice
+class Vertice {
+    private String nome;
 
-    public Vertice(String nome) { // construtor do vértice
-        this.nome = nome; // define o nome
-        this.arestas = new ArrayList<>(); // inicializa a lista de arestas
+    public Vertice(String nome) {
+        this.nome = nome;
     }
 
-    public String getNome() { // retorna o nome do vértice
+    public String getNome() {
         return nome;
-    }
-
-    public List<Aresta> getArestas() { // retorna todas as arestas do vértice
-        return arestas;
-    }
-
-    public void adicionarAresta(Aresta aresta) { // adiciona uma aresta à lista
-        arestas.add(aresta);
     }
 
     @Override
-    public String toString() { // retorna o nome do vértice como texto
-        return nome;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Vertice)) return false;
+        Vertice outro = (Vertice) obj;
+        return nome.equals(outro.nome);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nome);
     }
 }

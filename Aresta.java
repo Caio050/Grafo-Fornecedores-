@@ -1,30 +1,25 @@
 
 
 public class Aresta {
-    private Vertice origem; // vértice de onde a aresta começa
-    private Vertice destino; // vértice para onde a aresta vai
-    private double horas; // peso da aresta (representa tempo/distância em horas)
+    private Vertice origem;
+    private Vertice destino;
+    private double horas;
 
-    public Aresta(Vertice origem, Vertice destino, double horas) { // construtor da aresta
-        this.origem = origem; // define o vértice de origem
-        this.destino = destino; // define o vértice de destino
-        this.horas = horas; // define o valor do peso (horas)
+    public Aresta(Vertice origem, Vertice destino, double horas) {
+        this.origem = origem;
+        this.destino = destino;
+        this.horas = horas;
     }
 
-    public Vertice getOrigem() { // retorna o vértice de origem
+    public Vertice getOrigem() {
         return origem;
     }
 
-    public Vertice getDestino() { // retorna o vértice de destino
+    public Vertice getDestino() {
         return destino;
     }
 
-    public double getHoras() { // retorna o peso da aresta (horas)
+    public double getHoras() {
         return horas;
-    }
-
-    @Override
-    public String toString() { // retorna a aresta como texto
-        return origem.getNome() + " -> " + destino.getNome() + " (" + horas + "h)";
     }
 }
